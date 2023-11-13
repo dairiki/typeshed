@@ -7,15 +7,6 @@ from typing_extensions import Literal, TypeAlias
 
 from .exceptions import EOF, TIMEOUT
 
-PY3: bool
-text_type: Callable[[Incomplete], Incomplete]
-
-class _NullCoder:
-    @staticmethod
-    def encode(b: bytes, final: bool = False) -> bytes: ...
-    @staticmethod
-    def decode(b: bytes, final: bool = False) -> bytes: ...
-
 class _SupportsWriteFlush(SupportsWrite[AnyStr]):
     def flush(self) -> object: ...
 
@@ -37,6 +28,9 @@ class _AnyStrIO(Protocol[AnyStr]):
     def seek(self, __offset: int, __whence: int = ...) -> int: ...
     def getvalue(self) -> AnyStr: ...
 
+PY3: Literal[True]
+text_type: type[str]
+
 class SpawnBase(Generic[AnyStr]):
     encoding: str | None
     pid: int | None
@@ -48,7 +42,7 @@ class SpawnBase(Generic[AnyStr]):
     ignorecase: bool
     before: AnyStr
     after: AnyStr
-    match: re.Match[AnyStr]
+    match: AnyStr | re.Match[AnyStr]
     match_index: int | None
     terminated: bool
     exitstatus: int | None
