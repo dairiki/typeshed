@@ -8,7 +8,7 @@ from .spawnbase import SpawnBase, _BufferType, _SupportsWriteFlush
 
 class PopenSpawn(SpawnBase[AnyStr, _BufferType]):
     proc: subprocess.Popen
-    pid: int
+    pid: int | None
     terminated: bool
     exitstatus: int | None
     signalstatus: int | None

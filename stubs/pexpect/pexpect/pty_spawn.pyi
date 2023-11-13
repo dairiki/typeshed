@@ -51,11 +51,11 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
         ignore_sighup: bool = False,
         echo: bool = True,
         preexec_fn: Callable[[], object] | None = None,
+        *,
+        encoding: str,
         codec_errors: str = "strict",
         dimensions: tuple[int, int] | None = None,
         use_poll: bool = False,
-        *,
-        encoding: str,
     ) -> None: ...
     @overload
     def __init__(
