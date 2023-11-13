@@ -1,12 +1,18 @@
-from _typeshed import Incomplete
+import io
+import re
+import subprocess
+from _typeshed import Incomplete, StrOrBytesPath
+from collections.abc import Iterable, Sequence
+from typing import AnyStr, Literal, overload
 
-from pexpect import ExceptionPexpect, spawn
+from pexpect import ExceptionPexpect
 
-from .spawnbase import _Logfile
+from .pty_spawn import spawn
+from .spawnbase import _BufferType, _SupportsWriteFlush
 
 class ExceptionPxssh(ExceptionPexpect): ...
 
-class pxssh(spawn):
+class pxssh(spawn[AnyStr, _BufferType]):
     name: str
     UNIQUE_PROMPT: str
     PROMPT: Incomplete
@@ -16,46 +22,82 @@ class pxssh(spawn):
     force_password: bool
     debug_command_string: Incomplete
     options: Incomplete
+    @overload
     def __init__(
-        self,
-        timeout: int = 30,
+        self: pxssh[bytes, io.BytesIO],
+        timeout: float | None = 30,
         maxread: int = 2000,
-        searchwindowsize: Incomplete | None = None,
-        logfile: _Logfile | None = None,
-        cwd: Incomplete | None = None,
-        env: Incomplete | None = None,
-        ignore_sighup: bool = True,
+        searchwindowsize: int | None = None,
+        logfile: _SupportsWriteFlush[bytes] | None = None,
+        cwd: StrOrBytesPath | None = None,
+        env: subprocess._ENV | None = None,
+        ignore_sighup: bool = False,
         echo: bool = True,
-        options={},
-        encoding: Incomplete | None = None,
+        options: dict[str, Incomplete] = {},
+        encoding: None = None,
         codec_errors: str = "strict",
         debug_command_string: bool = False,
         use_poll: bool = False,
     ) -> None: ...
-    def levenshtein_distance(self, a, b): ...
-    def try_read_prompt(self, timeout_multiplier): ...
-    def sync_original_prompt(self, sync_multiplier: float = 1.0): ...
+    @overload
+    def __init__(
+        self: pxssh[str, io.StringIO],
+        timeout: float | None = 30,
+        maxread: int = 2000,
+        searchwindowsize: int | None = None,
+        logfile: _SupportsWriteFlush[str] | None = None,
+        cwd: StrOrBytesPath | None = None,
+        env: subprocess._ENV | None = None,
+        ignore_sighup: bool = False,
+        echo: bool = True,
+        options: dict[str, Incomplete] = {},
+        *,
+        encoding: str,
+        codec_errors: str = "strict",
+        debug_command_string: bool = False,
+        use_poll: bool = False,
+    ) -> None: ...
+    @overload
+    def __init__(
+        self: pxssh[str, io.StringIO],
+        timeout: float | None,
+        maxread: int,
+        searchwindowsize: int | None,
+        logfile: _SupportsWriteFlush[str] | None,
+        cwd: StrOrBytesPath | None,
+        env: subprocess._ENV | None,
+        ignore_sighup: bool,
+        echo: bool,
+        options: dict[str, Incomplete],
+        encoding: str,
+        codec_errors: str = "strict",
+        debug_command_string: bool = False,
+        use_poll: bool = False,
+    ) -> None: ...
+    def levenshtein_distance(self, a: Sequence[object], b: Sequence[object]) -> int: ...
+    def try_read_prompt(self, timeout_multiplier: float) -> AnyStr: ...
+    def sync_original_prompt(self, sync_multiplier: float = 1.0) -> bool: ...
     def login(
         self,
-        server,
-        username: Incomplete | None = None,
+        server: str,
+        username: str | None = None,
         password: str = "",
         terminal_type: str = "ansi",
-        original_prompt: str = "[#$]",
-        login_timeout: int = 10,
-        port: Incomplete | None = None,
+        original_prompt: str | re.Pattern[str] = "[#$]",
+        login_timeout: float | None = 10,
+        port: int | None = None,
         auto_prompt_reset: bool = True,
-        ssh_key: Incomplete | None = None,
+        ssh_key: StrOrBytesPath | Literal[True] | None = None,
         quiet: bool = True,
-        sync_multiplier: int = 1,
+        sync_multiplier: float = 1,
         check_local_ip: bool = True,
-        password_regex: str = "(?i)(?:password:)|(?:passphrase for key)",
-        ssh_tunnels={},
+        password_regex: str | re.Pattern[str] = "(?i)(?:password:)|(?:passphrase for key)",
+        ssh_tunnels: dict[Literal["local", "remote", "dynamic"], Iterable[str]] = {},
         spawn_local_ssh: bool = True,
         sync_original_prompt: bool = True,
-        ssh_config: Incomplete | None = None,
+        ssh_config: str | None = None,
         cmd: str = "ssh",
-    ): ...
+    ) -> Literal[True] | str: ...
     def logout(self) -> None: ...
-    def prompt(self, timeout: int = -1): ...
-    def set_unique_prompt(self): ...
+    def prompt(self, timeout: float | None = -1) -> bool: ...
+    def set_unique_prompt(self) -> bool: ...

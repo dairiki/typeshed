@@ -15,13 +15,13 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
     STDERR_FILENO: int
     str_last_chars: int
     env: subprocess._ENV
-    command: str
-    args: list[AnyStr]
+    command: str | None
+    args: list[AnyStr] | None
 
     @overload
     def __init__(
         self: spawn[bytes, io.BytesIO],
-        command: str,
+        command: str | None,
         args: list[bytes] = [],
         timeout: float | None = 30,
         maxread: int = 2000,
