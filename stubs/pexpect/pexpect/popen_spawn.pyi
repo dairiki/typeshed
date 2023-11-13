@@ -7,10 +7,6 @@ from .spawnbase import SpawnBase, _SupportsWriteFlush
 
 class PopenSpawn(SpawnBase[AnyStr]):
     proc: subprocess.Popen[AnyStr]
-    pid: int | None
-    terminated: bool
-    exitstatus: int | None
-    signalstatus: int | None
     @overload
     def __init__(
         self: PopenSpawn[bytes],

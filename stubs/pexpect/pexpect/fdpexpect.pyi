@@ -7,10 +7,7 @@ from .spawnbase import SpawnBase, _SupportsWriteFlush
 class fdspawn(SpawnBase[AnyStr]):
     args: None
     command: None
-    child_fd: int
     own_fd: Literal[False]
-    closed: bool
-    name: str
     use_poll: bool
     @overload
     def __init__(
