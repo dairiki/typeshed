@@ -1,11 +1,10 @@
-import io
 from _typeshed import FileDescriptorLike, Incomplete
 from collections.abc import Iterable
 from typing import AnyStr, Literal, NoReturn, overload
 
-from .spawnbase import SpawnBase, _BufferType, _SupportsWriteFlush
+from .spawnbase import SpawnBase, _SupportsWriteFlush
 
-class fdspawn(SpawnBase[AnyStr, _BufferType]):
+class fdspawn(SpawnBase[AnyStr]):
     args: None
     command: None
     child_fd: int
@@ -15,7 +14,7 @@ class fdspawn(SpawnBase[AnyStr, _BufferType]):
     use_poll: bool
     @overload
     def __init__(
-        self: fdspawn[bytes, io.BytesIO],
+        self: fdspawn[bytes],
         fd: FileDescriptorLike,
         args: Incomplete | None = None,
         timeout: float | None = 30,
@@ -28,7 +27,7 @@ class fdspawn(SpawnBase[AnyStr, _BufferType]):
     ) -> None: ...
     @overload
     def __init__(
-        self: fdspawn[str, io.StringIO],
+        self: fdspawn[str],
         fd: FileDescriptorLike,
         args: Incomplete | None = None,
         timeout: float | None = 30,
@@ -42,7 +41,7 @@ class fdspawn(SpawnBase[AnyStr, _BufferType]):
     ) -> None: ...
     @overload
     def __init__(
-        self: fdspawn[str, io.StringIO],
+        self: fdspawn[str],
         fd: FileDescriptorLike,
         args: Incomplete | None,
         timeout: float | None,

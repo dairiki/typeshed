@@ -1,14 +1,13 @@
-import io
 import subprocess
 from _typeshed import StrOrBytesPath
 from collections.abc import Callable, Iterable
 from typing import AnyStr, overload
 
-from .spawnbase import SpawnBase, _BufferType, _SupportsWriteFlush
+from .spawnbase import SpawnBase, _SupportsWriteFlush
 
 PY3: bool
 
-class spawn(SpawnBase[AnyStr, _BufferType]):
+class spawn(SpawnBase[AnyStr]):
     use_native_pty_fork: bool
     STDIN_FILENO: int
     STDOUT_FILENO: int
@@ -20,7 +19,7 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
 
     @overload
     def __init__(
-        self: spawn[bytes, io.BytesIO],
+        self: spawn[bytes],
         command: str | None,
         args: list[bytes] = [],
         timeout: float | None = 30,
@@ -39,7 +38,7 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
     ) -> None: ...
     @overload
     def __init__(
-        self: spawn[str, io.StringIO],
+        self: spawn[str],
         command: str,
         args: list[str] = [],
         timeout: float | None = 30,
@@ -59,7 +58,7 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
     ) -> None: ...
     @overload
     def __init__(
-        self: spawn[str, io.StringIO],
+        self: spawn[str],
         command: str,
         args: list[str],
         timeout: float | None,

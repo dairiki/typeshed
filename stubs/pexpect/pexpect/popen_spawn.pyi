@@ -1,21 +1,19 @@
-import io
 import subprocess
 from _typeshed import StrOrBytesPath
 from collections.abc import Callable, Iterable
 from typing import AnyStr, overload
 
-from .spawnbase import SpawnBase, _BufferType, _SupportsWriteFlush
+from .spawnbase import SpawnBase, _SupportsWriteFlush
 
-class PopenSpawn(SpawnBase[AnyStr, _BufferType]):
-    proc: subprocess.Popen
+class PopenSpawn(SpawnBase[AnyStr]):
+    proc: subprocess.Popen[AnyStr]
     pid: int | None
     terminated: bool
     exitstatus: int | None
     signalstatus: int | None
-
     @overload
     def __init__(
-        self: PopenSpawn[bytes, io.BytesIO],
+        self: PopenSpawn[bytes],
         cmd: subprocess._CMD,
         timeout: float | None = 30,
         maxread: int = 2000,
@@ -29,7 +27,7 @@ class PopenSpawn(SpawnBase[AnyStr, _BufferType]):
     ) -> None: ...
     @overload
     def __init__(
-        self: PopenSpawn[str, io.StringIO],
+        self: PopenSpawn[str],
         cmd: subprocess._CMD,
         timeout: float | None,
         maxread: int,
@@ -43,7 +41,7 @@ class PopenSpawn(SpawnBase[AnyStr, _BufferType]):
     ) -> None: ...
     @overload
     def __init__(
-        self: PopenSpawn[str, io.StringIO],
+        self: PopenSpawn[str],
         cmd: subprocess._CMD,
         timeout: float | None = 30,
         maxread: int = 2000,

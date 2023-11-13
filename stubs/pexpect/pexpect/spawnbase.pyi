@@ -1,9 +1,8 @@
-import io
 import re
 from _typeshed import Incomplete, Self, SupportsWrite
 from collections.abc import Awaitable, Callable, Iterable, Iterator
 from types import TracebackType
-from typing import AnyStr, Generic, TypeVar, overload
+from typing import AnyStr, Generic, Protocol, overload
 from typing_extensions import Literal, TypeAlias
 
 from .exceptions import EOF, TIMEOUT
@@ -20,8 +19,6 @@ class _NullCoder:
 class _SupportsWriteFlush(SupportsWrite[AnyStr]):
     def flush(self) -> object: ...
 
-_BufferType = TypeVar("_BufferType", io.StringIO, io.BytesIO)
-
 _Pattern: TypeAlias = str | AnyStr | re.Pattern[AnyStr] | type[EOF | TIMEOUT]
 _CompiledPattern: TypeAlias = re.Pattern[AnyStr] | type[EOF | TIMEOUT]
 _ExactPattern: TypeAlias = str | AnyStr | type[EOF | TIMEOUT]
@@ -29,7 +26,18 @@ _ExactPattern: TypeAlias = str | AnyStr | type[EOF | TIMEOUT]
 _Patterns: TypeAlias = Iterable[_Pattern[AnyStr]] | _Pattern[AnyStr] | None
 _ExactPatterns: TypeAlias = Iterable[_ExactPattern[AnyStr]] | _ExactPattern[AnyStr]
 
-class SpawnBase(Generic[AnyStr, _BufferType]):
+class _AnyStrIO(Protocol[AnyStr]):
+    # We really want a conditional type alias such that:
+    # - _AnyStrIO[bytes] = io.BytesIO
+    # - _AnyStrIO[str] = io.StringIO
+    # This is close enough, and annotates all the methods that pexpect currently uses.
+    def write(self, __b: AnyStr) -> int: ...
+    def read(self, size: int = -1) -> AnyStr: ...
+    def tell(self) -> int: ...
+    def seek(self, __offset: int, __whence: int = ...) -> int: ...
+    def getvalue(self) -> AnyStr: ...
+
+class SpawnBase(Generic[AnyStr]):
     encoding: str | None
     pid: int | None
     flag_eof: bool
@@ -63,7 +71,7 @@ class SpawnBase(Generic[AnyStr, _BufferType]):
     closed: bool
     codec_errors: str | None
     string_type: type[AnyStr]
-    buffer_type: type[_BufferType]
+    buffer_type: type[_AnyStrIO[AnyStr]]
     crlf: AnyStr
     allowed_string_types: tuple[type[bytes | str], ...]
     linesep: AnyStr
@@ -71,7 +79,7 @@ class SpawnBase(Generic[AnyStr, _BufferType]):
     async_pw_transport: Incomplete
     @overload
     def __init__(
-        self: SpawnBase[bytes, io.BytesIO],
+        self: SpawnBase[bytes],
         timeout: float | None = 30,
         maxread: int = 2000,
         searchwindowsize: int | None = None,
@@ -81,7 +89,7 @@ class SpawnBase(Generic[AnyStr, _BufferType]):
     ): ...
     @overload
     def __init__(
-        self: SpawnBase[str, io.StringIO],
+        self: SpawnBase[str],
         timeout: float | None,
         maxread: int,
         searchwindowsize: int | None,
@@ -91,7 +99,7 @@ class SpawnBase(Generic[AnyStr, _BufferType]):
     ): ...
     @overload
     def __init__(
-        self: SpawnBase[str, io.StringIO],
+        self: SpawnBase[str],
         timeout: float | None = 30,
         maxread: int = 2000,
         searchwindowsize: int | None = None,

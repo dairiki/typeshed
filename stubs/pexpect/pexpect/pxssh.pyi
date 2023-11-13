@@ -1,4 +1,3 @@
-import io
 import re
 import subprocess
 from _typeshed import Incomplete, StrOrBytesPath
@@ -8,11 +7,11 @@ from typing import AnyStr, Literal, overload
 from pexpect import ExceptionPexpect
 
 from .pty_spawn import spawn
-from .spawnbase import _BufferType, _SupportsWriteFlush
+from .spawnbase import _SupportsWriteFlush
 
 class ExceptionPxssh(ExceptionPexpect): ...
 
-class pxssh(spawn[AnyStr, _BufferType]):
+class pxssh(spawn[AnyStr]):
     name: str
     UNIQUE_PROMPT: str
     PROMPT: Incomplete
@@ -24,7 +23,7 @@ class pxssh(spawn[AnyStr, _BufferType]):
     options: Incomplete
     @overload
     def __init__(
-        self: pxssh[bytes, io.BytesIO],
+        self: pxssh[bytes],
         timeout: float | None = 30,
         maxread: int = 2000,
         searchwindowsize: int | None = None,
@@ -41,7 +40,7 @@ class pxssh(spawn[AnyStr, _BufferType]):
     ) -> None: ...
     @overload
     def __init__(
-        self: pxssh[str, io.StringIO],
+        self: pxssh[str],
         timeout: float | None = 30,
         maxread: int = 2000,
         searchwindowsize: int | None = None,
@@ -59,7 +58,7 @@ class pxssh(spawn[AnyStr, _BufferType]):
     ) -> None: ...
     @overload
     def __init__(
-        self: pxssh[str, io.StringIO],
+        self: pxssh[str],
         timeout: float | None,
         maxread: int,
         searchwindowsize: int | None,
