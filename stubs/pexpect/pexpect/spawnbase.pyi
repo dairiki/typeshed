@@ -113,22 +113,26 @@ class SpawnBase(Generic[AnyStr]):
     def compile_pattern_list(self, patterns: _Patterns[AnyStr]) -> list[_CompiledPattern[AnyStr]]: ...
     @overload
     def expect(
-        self, pattern: _Patterns[AnyStr], timeout: float | None = -1, searchwindowsize: int = -1, async_: Literal[False] = False
+        self,
+        pattern: _Patterns[AnyStr],
+        timeout: float | None = -1,
+        searchwindowsize: int | None = -1,
+        async_: Literal[False] = False,
     ) -> int: ...
     @overload
     def expect(
-        self, pattern: _Patterns[AnyStr], timeout: float | None, searchwindowsize: int, async_: Literal[True]
+        self, pattern: _Patterns[AnyStr], timeout: float | None, searchwindowsize: int | None, async_: Literal[True]
     ) -> Awaitable[int]: ...
     @overload
     def expect(
-        self, pattern: _Patterns[AnyStr], timeout: float | None = -1, searchwindowsize: int = -1, *, async_: Literal[True]
+        self, pattern: _Patterns[AnyStr], timeout: float | None = -1, searchwindowsize: int | None = -1, *, async_: Literal[True]
     ) -> Awaitable[int]: ...
     @overload
     def expect_list(
         self,
         pattern_list: Iterable[_CompiledPattern[AnyStr]],
         timeout: float | None = -1,
-        searchwindowsize: int = -1,
+        searchwindowsize: int | None = -1,
         async_: Literal[False] = False,
     ) -> int: ...
     @overload
@@ -136,7 +140,7 @@ class SpawnBase(Generic[AnyStr]):
         self,
         pattern_list: Iterable[_CompiledPattern[AnyStr]],
         timeout: float | None,
-        searchwindowsize: int,
+        searchwindowsize: int | None,
         async_: Literal[True],
     ) -> Awaitable[int]: ...
     @overload
@@ -144,7 +148,7 @@ class SpawnBase(Generic[AnyStr]):
         self,
         pattern_list: Iterable[_CompiledPattern[AnyStr]],
         timeout: float | None = -1,
-        searchwindowsize: int = -1,
+        searchwindowsize: int | None = -1,
         *,
         async_: Literal[True],
     ) -> Awaitable[int]: ...
@@ -153,23 +157,23 @@ class SpawnBase(Generic[AnyStr]):
         self,
         pattern_list: _ExactPatterns[AnyStr],
         timeout: float | None = -1,
-        searchwindowsize: int = -1,
+        searchwindowsize: int | None = -1,
         async_: Literal[False] = False,
     ) -> int: ...
     @overload
     def expect_exact(
-        self, pattern_list: _ExactPatterns[AnyStr], timeout: float | None, searchwindowsize: int, async_: Literal[True]
+        self, pattern_list: _ExactPatterns[AnyStr], timeout: float | None, searchwindowsize: int | None, async_: Literal[True]
     ) -> Awaitable[int]: ...
     @overload
     def expect_exact(
         self,
         pattern_list: _ExactPatterns[AnyStr],
         timeout: float | None = -1,
-        searchwindowsize: int = -1,
+        searchwindowsize: int | None = -1,
         *,
         async_: Literal[True],
     ) -> Awaitable[int]: ...
-    def expect_loop(self, searcher: Incomplete, timeout: float | None = -1, searchwindowsize: int = -1) -> int: ...
+    def expect_loop(self, searcher: Incomplete, timeout: float | None = -1, searchwindowsize: int | None = -1) -> int: ...
     def read(self, size: int = -1) -> AnyStr: ...
     def readline(self, size: int = -1) -> AnyStr: ...
     def __iter__(self) -> Iterator[AnyStr]: ...
