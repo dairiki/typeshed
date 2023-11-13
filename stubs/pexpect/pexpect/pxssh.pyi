@@ -4,8 +4,7 @@ from _typeshed import Incomplete, StrOrBytesPath
 from collections.abc import Iterable, Sequence
 from typing import AnyStr, Literal, overload
 
-from pexpect import ExceptionPexpect
-
+from .exceptions import ExceptionPexpect
 from .pty_spawn import spawn
 from .spawnbase import _SupportsWriteFlush
 
