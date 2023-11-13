@@ -1,24 +1,10 @@
 import io
 import subprocess
-import sys
 from _typeshed import StrOrBytesPath
-from collections.abc import Callable, Iterable, Mapping, Sequence
+from collections.abc import Callable, Iterable
 from typing import AnyStr, overload
-from typing_extensions import TypeAlias
 
 from .spawnbase import SpawnBase, _BufferType, _SupportsWriteFlush
-
-# _CMD and _ENV copied from subprocess.pyi
-if sys.version_info >= (3, 8):
-    _CMD: TypeAlias = StrOrBytesPath | Sequence[StrOrBytesPath]
-else:
-    # Python 3.7 doesn't support _CMD being a single PathLike.
-    # See: https://bugs.python.org/issue31961
-    _CMD: TypeAlias = str | bytes | Sequence[StrOrBytesPath]
-if sys.platform == "win32":
-    _ENV: TypeAlias = Mapping[str, str]
-else:
-    _ENV: TypeAlias = Mapping[bytes, StrOrBytesPath] | Mapping[str, StrOrBytesPath]
 
 class PopenSpawn(SpawnBase[AnyStr, _BufferType]):
     proc: subprocess.Popen
@@ -30,13 +16,13 @@ class PopenSpawn(SpawnBase[AnyStr, _BufferType]):
     @overload
     def __init__(
         self: PopenSpawn[bytes, io.BytesIO],
-        cmd: _CMD,
+        cmd: subprocess._CMD,
         timeout: float | None = 30,
         maxread: int = 2000,
         searchwindowsize: int | None = None,
         logfile: _SupportsWriteFlush[bytes] | None = None,
         cwd: StrOrBytesPath | None = None,
-        env: _ENV | None = None,
+        env: subprocess._ENV | None = None,
         encoding: None = None,
         codec_errors: str = "strict",
         preexec_fn: Callable[[], object] | None = None,
@@ -44,13 +30,13 @@ class PopenSpawn(SpawnBase[AnyStr, _BufferType]):
     @overload
     def __init__(
         self: PopenSpawn[str, io.StringIO],
-        cmd: _CMD,
+        cmd: subprocess._CMD,
         timeout: float | None,
         maxread: int,
         searchwindowsize: int | None,
         logfile: _SupportsWriteFlush[str] | None,
         cwd: StrOrBytesPath | None,
-        env: _ENV | None,
+        env: subprocess._ENV | None,
         encoding: str,
         codec_errors: str = "strict",
         preexec_fn: Callable[[], object] | None = None,
@@ -58,13 +44,13 @@ class PopenSpawn(SpawnBase[AnyStr, _BufferType]):
     @overload
     def __init__(
         self: PopenSpawn[str, io.StringIO],
-        cmd: _CMD,
+        cmd: subprocess._CMD,
         timeout: float | None = 30,
         maxread: int = 2000,
         searchwindowsize: int | None = None,
         logfile: _SupportsWriteFlush[str] | None = None,
         cwd: StrOrBytesPath | None = None,
-        env: _ENV | None = None,
+        env: subprocess._ENV | None = None,
         *,
         encoding: str,
         codec_errors: str = "strict",

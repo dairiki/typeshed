@@ -1,17 +1,10 @@
 import io
-import sys
+import subprocess
 from _typeshed import StrOrBytesPath
-from collections.abc import Callable, Iterable, Mapping
+from collections.abc import Callable, Iterable
 from typing import AnyStr, overload
-from typing_extensions import TypeAlias
 
 from .spawnbase import SpawnBase, _BufferType, _SupportsWriteFlush
-
-# _ENV copied from subprocess.pyi
-if sys.platform == "win32":
-    _ENV: TypeAlias = Mapping[str, str]
-else:
-    _ENV: TypeAlias = Mapping[bytes, StrOrBytesPath] | Mapping[str, StrOrBytesPath]
 
 PY3: bool
 
@@ -21,7 +14,7 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
     STDOUT_FILENO: int
     STDERR_FILENO: int
     str_last_chars: int
-    env: _ENV
+    env: subprocess._ENV
     command: str
     args: list[AnyStr]
 
@@ -35,7 +28,7 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
         searchwindowsize: int | None = None,
         logfile: _SupportsWriteFlush[bytes] | None = None,
         cwd: StrOrBytesPath | None = None,
-        env: _ENV | None = None,
+        env: subprocess._ENV | None = None,
         ignore_sighup: bool = False,
         echo: bool = True,
         preexec_fn: Callable[[], object] | None = None,
@@ -54,7 +47,7 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
         searchwindowsize: int | None = None,
         logfile: _SupportsWriteFlush[str] | None = None,
         cwd: StrOrBytesPath | None = None,
-        env: _ENV | None = None,
+        env: subprocess._ENV | None = None,
         ignore_sighup: bool = False,
         echo: bool = True,
         preexec_fn: Callable[[], object] | None = None,
@@ -74,7 +67,7 @@ class spawn(SpawnBase[AnyStr, _BufferType]):
         searchwindowsize: int | None,
         logfile: _SupportsWriteFlush[str] | None,
         cwd: StrOrBytesPath | None,
-        env: _ENV | None,
+        env: subprocess._ENV | None,
         ignore_sighup: bool,
         echo: bool,
         preexec_fn: Callable[[], object] | None,
@@ -122,7 +115,7 @@ def spawnu(
     searchwindowsize: int | None = None,
     logfile: _SupportsWriteFlush[str] | None = None,
     cwd: StrOrBytesPath | None = None,
-    env: _ENV | None = None,
+    env: subprocess._ENV | None = None,
     ignore_sighup: bool = False,
     echo: bool = True,
     preexec_fn: Callable[[], object] | None = None,
